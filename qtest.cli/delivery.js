@@ -22,7 +22,7 @@ class StepLog {
 
 class TestLog {
   name;
-  automationContent;
+  automation_content;
   status;
   exe_start_date;
   exe_end_date;
@@ -31,7 +31,7 @@ class TestLog {
   test_step_logs = [];
   constructor(name, automationContent) {
     this.name = name;
-    this.automationContent = automationContent;
+    this.automation_content = automationContent;
   }
   init(results) { }
 }
@@ -49,13 +49,12 @@ class EGLTestLog extends TestLog {
     this.setModules();
     this.setSteps();
   }
-  
-  setStatus()
-  {
+
+  setStatus() {
     this.status = this.#resultsBody.status;
   }
 
-  setExecutionTime(){
+  setExecutionTime() {
     let startDate = new Date(this.#resultsBody.start);
     this.exe_start_date = startDate.toISOString();
 
@@ -76,8 +75,36 @@ class EGLTestLog extends TestLog {
     this.module_names.push(subSuite.value);
   }
 
-  setSteps(){
-    
+  setSteps() {
+    let steps = this.flattenSteps(this.#resultsBody.steps);
+    let order = 0;
+    for (let step of steps) {
+      step.order = order++;
+      this.test_step_logs.push(step);
+    }
+  }
+
+  * flattenSteps(steps) {
+    if (steps === undefined || steps === null) { return; }
+    for (let step of steps) {
+      let stepLog = new StepLog(step.name);
+      stepLog.status = step.status;
+      this.addAttachments(step.attachments);
+      yield stepLog;
+      yield* this.flattenSteps(step.steps);
+    }
+  }
+
+  addAttachments(attachments) {
+    if (attachments === undefined || attachments.length === 0) { return; }
+    for (let attachment of attachments) {
+      this.attachments.push({
+        name: attachment.source,
+        content_type: attachment.type,
+        data: Buffer.from(attachment.source).toString("base64"),
+      });
+
+    }
   }
 }
 
@@ -131,7 +158,7 @@ function sendToTricentis(testResults) {
 }
 
 (async () => {
-  let parser = new EGLParser("C:\\temp\\Edg.Eden");
+  let parser = new EGLParser("C:\\temp\\Edg.Eden.Web.UI.SystemTests.test-results");
   let autoLog = await parser.parse();
 
   console.info(`Total test cases count: ${autoLog.test_logs.length}`);
