@@ -71,6 +71,9 @@ Create web hooks in Azure DevOps to synchronize Product Backlog Items to qTest R
         "url": "<URL of the Pulse trigger `qTestDefectSubmitted`>", //REPLACE
         "events": ["defect_submitted"],
         "responseType": "json",
+        "projectIds": [
+            0
+        ],
         "secretKey": "<some secret value>" //REPLACE
     }
     ```
@@ -84,7 +87,7 @@ Create web hooks in Azure DevOps to synchronize Product Backlog Items to qTest R
 
 ### Constant "QTEST_TOKEN"
 
-A valid qTest access token.
+A valid qTest access Bearer token (just the token without "Bearer").
 
 The queries and modifications in qTest will be performed on behalf of the user owning the token. It's a good practice to create a "service user" in qTest for this purpose to separate the changes performed by the synchronization from the changes of normal qTest users.
 Please follow [these steps](https://documentation.tricentis.com/qtest/od/en/content/pulse/constants/pulse_constants.htm#qTestAPIToken) to get the access token value from qTest Manager.
@@ -108,7 +111,7 @@ E.g. if you see the URL `https://xxx.qtestnet.com/p/123456/portal/project` in th
 
 ### Constant "RequirementParentID"
 
-The id of the parent module in the qTest requirements hierarchy where the Azure DevOps work items will be synchronized to as Requirements.
+The id of the parent module in the qTest requirements hierarchy where the Azure DevOps work items will be synchronized to as Requirements. All work items will be created as flat requirements in qTest under the parent module.
 
 You can create a new module in qTest Manager in the requirement hierarchy (e.g. "Azure DevOps") or you can select an existing module in the tree.
 
@@ -121,7 +124,7 @@ E.g. if you see the URL `https://xxx.qtestnet.com/p/123456/portal/project#tab=re
 
 ### Constant "RequirementDescriptionFieldID"
 
-The id of the "Description" field of the Requirement in your qTest project where the work item details will be synchronized to.
+The id of the "Description" field of the Requirement in your qTest project where the work item details will be synchronized to. To get this value the Field API (/api/v3/projects/{Your Project ID}/settings/requirements/fields) needs to be called. 
 
 ### Constant "AllowCreationOnUpdate"
 
@@ -144,11 +147,11 @@ The URL has to have the form `https://dev.azure.com/[YOUR AZDO ORGANIZATION]/[YO
 
 ### Constant "DefectSummaryFieldID"
 
-The id of the "Summary" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to.
+The id of the "Summary" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to. To get this value the Field API (/api/v3/fields/defects) needs to be called. 
 
 ### Constant "DefectDescriptionFieldID"
 
-The id of the "Description" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to.
+The id of the "Description" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to. To get this value the Field API (/api/v3/fields/defects) needs to be called. 
 
 ## Limitations
 

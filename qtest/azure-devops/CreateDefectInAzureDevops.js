@@ -1,9 +1,15 @@
-const PulseSdk = require("@qasymphony/pulse-sdk");
+const {Webhooks} = require('@qasymphony/pulse-sdk');
 const request = require("request");
-const xml2js = require("xml2js");
 
 // DO NOT EDIT exported "handler" function is the entrypoint
 exports.handler = async function ({ event, constants, triggers }, context, callback) {
+    let iteration;
+    if (event.iteration != undefined) {
+        iteration = event.iteration;
+    } else {
+        iteration = 1;
+    }
+    const maxIterations = 4;
     const defectId = event.defect.id;
     const projectId = event.defect.project_id;
     console.log(`[Info] Create defect event received for defect '${defectId}' in project '${projectId}'`);
@@ -25,6 +31,11 @@ exports.handler = async function ({ event, constants, triggers }, context, callb
     console.log(`[Info] New defect name: ${newSummary}`);
     await updateDefectSummary(defectId, constants.DefectSummaryFieldID, newSummary);
 
+    function emitEvent(name, payload) {
+        let t = triggers.find(t => t.name === name);
+        return t && new Webhooks().invoke(t, payload);
+    }
+
     function getNamePrefix(workItemId) {
         return `WI${workItemId}: `;
     }
@@ -45,13 +56,12 @@ exports.handler = async function ({ event, constants, triggers }, context, callb
 
     async function getDefectDetailsByIdWithRetry(defectId) {
         let defectDetails = undefined;
-        let delay = 3000;
+        let delay = 5000;
         let attempt = 0;
         do {
             if (attempt > 0) {
                 console.log(`[Warn] Could not get defect details on attempt ${attempt}. Waiting ${delay} ms.`);
                 await new Promise((r) => setTimeout(r, delay));
-                delay *= 3;
             }
 
             defectDetails = await getDefectDetailsById(defectId);
@@ -59,9 +69,17 @@ exports.handler = async function ({ event, constants, triggers }, context, callb
             if (defectDetails && defectDetails.summary && defectDetails.description) return defectDetails;
 
             attempt++;
-        } while (attempt < 6);
+        } while (attempt < 12);
 
-        console.log(`[Error] Could not get defect details. Giving up.`);
+        console.log(`[Error] Could not get defect details, user has not yet performed initial save in qTest, or defect was abandoned.`);
+        if (iteration < maxIterations) {
+            iteration = iteration + 1;
+            console.log(`[Info] Re-executing with original parameters and iteration of ${iteration} of a maximum ${maxIterations}.`);
+            event.iteration = iteration;
+            emitEvent('qTestDefectSubmitted', event);
+        } else {
+            console.error(`[Error] Retry exceeded ${maxIterations} attempts, rule has timed out.`);
+        }
     }
 
     async function getDefectDetailsById(defectId) {
