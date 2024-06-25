@@ -6,7 +6,7 @@ const xml2js = require('xml2js');
 exports.handler = async function({ event: body, constants, triggers }, context, callback) {
     function emitEvent(name, payload) {
         let t = triggers.find(t => t.name === name);
-        return t && new Webhooks().invoke(t, payload);
+        return t ? new Webhooks().invoke(t, payload) : console.error(`[ERROR]: (emitEvent) Webhook named '${name}' not found.`);
     }
     
     var payload = body;
