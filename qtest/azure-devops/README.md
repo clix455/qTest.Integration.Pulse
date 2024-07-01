@@ -5,11 +5,53 @@ Synchronizes Azure DevOps work items with qTest requirements and defects. In pre
 ## Features
 
 <!-- prettier-ignore -->
-* Automatically create new qTest Requirement when a new work item is created in Azure DevOps
-* Automatically update qTest Requirement when the corresponding work item is updated in Azure DevOps
-* Automatically delete qTest Requirement when the corresponding work item is deleted in Azure DevOps
-* Automatically create new Azure DevOps Bug when a new Defect is created in qTest
-* Automatically update qTest Defect when the corresponding Bug is updated in Azure DevOps
+### Automatically create new qTest Requirement when a new work item is created in Azure DevOps
+The following information get synchronized to qTest for the corresponding Azure DevOps item,
+* Name
+* Description (combines the following information from Azure DevOps)
+  - Type
+  - Area
+  - Iteration
+  - State
+  - Reason
+  - Acceptance
+  - Description
+  
+### Automatically update qTest Requirement when the corresponding work item is updated in Azure DevOps
+The following information get updated in qTest for the corresponding Azure DevOps item,
+* Name
+* Description (combines the following information from Azure DevOps)
+  - Type
+  - Area
+  - Iteration
+  - State
+  - Reason
+  - Acceptance
+  - Description
+
+
+### Automatically delete qTest Requirement when the corresponding work item is deleted in Azure DevOps
+The corresponding qTest requirement get deleted. 
+
+### Automatically create new Azure DevOps Bug when a new Defect is created in qTest
+When a new defect created in qTest, it creates a bug in Azure DevOps, and synchronizes the following information,
+* Title of the qTest defect.
+* Description of the qTest defect.
+* Link to the qTest defect.
+* Tag it with 'qTest'.
+
+### Automatically update qTest Defect when the corresponding Bug is updated in Azure DevOps
+When corresponding Azure DevOps bug updated, it updates the qTest defect for the following fields,
+* Summary
+* Description (combine the following information from Azure DevOps)
+  * Type
+  * Area
+  * Iteration
+  * State
+  * Reason
+  * Repro steps
+  * System info
+  * Acceptance criteria
 
 ## Concepts / Assumptions / Recommendations
 
