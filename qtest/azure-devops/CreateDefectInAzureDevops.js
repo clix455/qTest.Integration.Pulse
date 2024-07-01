@@ -1,4 +1,4 @@
-const { Webhooks } = require('@qasymphony/pulse-sdk');
+// const { Webhooks } = require('@qasymphony/pulse-sdk');
 const axios = require('axios');
 
 exports.handler = async function ({ event, constants, triggers }, context, callback) {
