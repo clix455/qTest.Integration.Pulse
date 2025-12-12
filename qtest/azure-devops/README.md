@@ -94,7 +94,8 @@ Please follow [these steps](https://documentation.tricentis.com/qtest/od/en/cont
 
 ### Constant "ManagerURL"
 
-The qTest Manager URL unique to your organization.
+The base qTest Manager URL unique to your organization, without protocol.  Do not use "http/https" in the value.
+FOR EXAMPLE: `myqtest.qtestnet.com`
 
 Please follow [these steps](https://documentation.tricentis.com/qtest/od/en/content/pulse/constants/pulse_constants.htm#ManagerURL) to get the URL from qTest Manager.
 
@@ -107,7 +108,7 @@ Copy the project id from your web browser search bar:
 <!-- prettier-ignore -->
 * open the corresponding project in qTest Manager
 * copy the first integer number in the URL
-E.g. if you see the URL `https://xxx.qtestnet.com/p/123456/portal/project` in the browser then the project id is `123456`.
+E.g. if you see the URL `https://myqtest.qtestnet.com/p/123456/portal/project` in the browser then the project id is `123456`.
 
 ### Constant "RequirementParentID"
 
@@ -120,11 +121,12 @@ Copy the parent id from your web browser search bar:
 <!-- prettier-ignore -->
 * create a new module or select an existing one in qTest Manager
 * copy the id from the query string of the URL
-E.g. if you see the URL `https://xxx.qtestnet.com/p/123456/portal/project#tab=requirements&object=0&id=9876543` in the browser then the parent id is `9876543`.
+E.g. if you see the URL `https://myqtest.qtestnet.com/p/123456/portal/project#tab=requirements&object=0&id=9876543` in the browser then the parent id is `9876543`.
 
 ### Constant "RequirementDescriptionFieldID"
 
 The id of the "Description" field of the Requirement in your qTest project where the work item details will be synchronized to. To get this value the Field API (/api/v3/projects/{Your Project ID}/settings/requirements/fields) needs to be called. 
+FOR EXAMPLE: `https://myqtest.qtestnet.com/api/v3/projects/123456/settings/requirements/fields`
 
 ### Constant "AllowCreationOnUpdate"
 
@@ -147,11 +149,13 @@ The URL has to have the form `https://dev.azure.com/[YOUR AZDO ORGANIZATION]/[YO
 
 ### Constant "DefectSummaryFieldID"
 
-The id of the "Summary" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to. To get this value the Field API (/api/v3/fields/defects) needs to be called. 
+The id of the "Summary" field of the Defect in your qTest project to where the work item details of Bugs will be synchronized. To get this value the Field API (/api/v3/projects/{Your Project ID}/settings/defect/fields) needs to be called. 
+FOR EXAMPLE: `http://myqtest.qtestnet.com/api/v3/projects/123456/settings/defects/fields`
 
 ### Constant "DefectDescriptionFieldID"
 
-The id of the "Description" field of the Defect in your qTest project where the work item details of Bugs will be synchronized to. To get this value the Field API (/api/v3/fields/defects) needs to be called. 
+The id of the "Description" field of the Defect in your qTest project to where the work item details of Bugs will be synchronized. To get this value the Field API (/api/v3/projects/{Your Project ID}/settings/defect/fields) needs to be called. 
+FOR EXAMPLE: `http://myqtest.qtestnet.com/api/v3/projects/123456/settings/defects/fields`
 
 ## Limitations
 
